@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Horoscope Finder</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #0a0a23;
+            color: white;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #bgVideo {
+            position: fixed;
+            top: 20;
+            left: 0;
+            min-width: 50vw;
+            min-height: 20vh;
+            object-fit: cover;
+            z-index: -1;
+            opacity:inherit;
+           
+        }
+
+        .facts {
+            line-height: 1.6; 
+            text-align: left;
+
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(26, 26, 64, 0.85);
+            border-radius: 10px;
+            margin-top: 60px;
+            box-shadow: 0 0 20px rgba(0,191,255,0.2);
+            z-index: 1;
+        }
+
+        select, input, button {
+            margin: 10px;
+            padding: 8px;
+            background: #2a2a5a;
+            color: white;
+            border: 1px solid #3a3a7a;
+            border-radius: 4px;
+        }
+
+        button {
+            cursor: pointer;
+            background: #3a3a7a;
+        }
+
+        .constellation {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite;
+            box-shadow: 0 0 10px white;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .facts {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #2a2a5a;
+            border-radius: 8px;
+        }
+
+        .sign-image {
+            width: 300px;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 5px;
+
+        }
+        .facts p {
+            text-align: center;
+        }
+        
+    
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop playsinline id="bgVideo">
+        <source src="C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/bgweb2.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <div class="container">
+        <h2>🌟 Find Your Constellation 🌟</h2>
+        <select id="month">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+        </select>
+        <input type="number" id="day" min="1" max="31" placeholder="Day">
+        <button onclick="findHoroscope()">Show Constellation</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const constellationPatterns = {
+            'Aries': [[50,50], [70,30], [90,50], [110,70], [130,50]],
+            'Taurus': [[50,50], [70,70], [90,50], [110,30], [130,50], [150,70]],
+            'Gemini': [[50,50], [70,30], [90,50], [110,70], [130,50], [150,30]],
+            'Cancer': [[50,70], [70,50], [90,70], [110,50], [130,70], [150,50]],
+            'Leo': [[50,50], [65,65], [80,50], [95,35], [110,50], [125,65], [140,50]],
+            'Virgo': [[50,50], [60,60], [70,50], [80,40], [90,50], [100,60], [110,50], [120,40]],
+            'Libra': [[50,50], [70,50], [90,50], [110,50], [130,50], [150,50]],
+            'Scorpio': [[50,50], [60,60], [70,50], [80,40], [90,50], [100,60], [110,50]],
+            'Sagittarius': [[50,50], [65,65], [80,50], [95,35], [110,50]],
+            'Capricorn': [[50,50], [60,60], [70,50], [80,40], [90,50], [100,60], [110,50], [120,40], [130,50]],
+            'Aquarius': [[50,50], [65,35], [80,50], [95,65], [110,50], [125,35], [140,50]],
+            'Pisces': [[50,50], [65,65], [80,50], [95,35], [110,50], [125,65], [140,50]]
+        };
+
+        const facts = {
+            'Aries': ['Aries is known for being bold, energetic, and full of initiative.',
+            'As a fire sign ruled by Mars, Aries often charges ahead with confidence and passion.',
+            'They’re natural leaders who thrive in competitive environments.',
+            'Aries can be impulsive at times, acting before fully thinking things through.',
+            'Their straightforward nature makes them honest, but sometimes a bit blunt.',
+            'Aries loves challenges and gets easily bored without excitement or adventure.Natural born leaders',],
+
+            'Taurus': ['Taurus is grounded, reliable, and values stability in all areas of life.',
+            'As an earth sign ruled by Venus, they have a deep appreciation for beauty, comfort, and sensual pleasures.',
+            "They're known for their patience and strong work ethic, often building success slowly but surely.",
+            'Taurus can be incredibly loyal but also quite stubborn once their mind is set.',
+            'They crave security and often surround themselves with familiar routines and luxuries.',
+            'Though calm on the surface, a Taurus can have a fierce temper when pushed too far.'],
+
+            'Gemini': ['Gemini is curious, witty, and always eager to learn something new.',
+            'Ruled by Mercury, the planet of communication, they thrive on conversation and mental stimulation.',
+            "They’re social butterflies who easily adapt to different people and situations.",
+            'Gemini can sometimes come off as inconsistent or indecisive due to their dual nature.',
+            'They love variety and often juggle multiple interests, projects, or friend groups at once.',
+            'Quick-thinking and expressive, Geminis bring energy and excitement wherever they go.'],
+
+            'Cancer': ['Cancer is deeply emotional, nurturing, and highly intuitive.',
+            'Ruled by the Moon, they’re sensitive to the moods of others and often absorb the energy around them.',
+            'They value home, family, and emotional security above all else.',
+            'While they may appear guarded at first, once they trust you, their loyalty runs deep.',
+            'Cancer can be moody or withdrawn when overwhelmed, retreating into their “shell” for comfort.',
+            'Their caring nature makes them amazing friends, partners, and listeners.'],
+
+            'Leo': ['Leo is confident, charismatic, and naturally drawn to the spotlight.',
+            'Ruled by the Sun, they radiate warmth, creativity, and a strong sense of self.',
+            'They thrive on recognition and love to be admired for their talents and generosity.',
+            'Leos are fiercely loyal and protective of those they care about.',
+            'Their pride can sometimes make them stubborn or dramatic, but their heart is always in the right place.',
+            'With a flair for the theatrical, Leos bring bold energy and passion into everything they do.'],
+
+
+            'Virgo': ['Virgos are known for their logical minds and love for structure and organization.',
+            'They tend to be perfectionists, often holding themselves and others to high standards.', 
+            'Virgos are usually quiet observers, preferring to think things through before speaking or acting.', 
+            'They have a strong sense of responsibility and are often the dependable ones in any group.',
+            'Though they may seem reserved, Virgos are deeply caring and loyal once they trust someone.',
+            'They value honesty and practicality, and often give thoughtful, no-nonsense advice.'],
+
+            'Libra': ['Libra is charming, diplomatic, and always striving to create harmony and balance.',
+            'Ruled by Venus, they have a strong appreciation for beauty, art, and meaningful connections.',
+            'They’re natural peacemakers who can see all sides of a situation, sometimes making decisions tricky.',
+            'Libras value partnership deeply and often feel most complete when sharing life with someone.',
+            'While they dislike conflict, they’ll stand up for justice and fairness when it really matters.',
+            'With their graceful presence and social ease, Libras light up any room they walk into.'],
+
+            'Scorpio': ['Scorpio is intense, mysterious, and emotionally powerful.', 
+            'Ruled by Pluto and Mars, they’re known for their passion, depth, and ability to transform themselves and others.', 
+            'Scorpios feel everything on a deep level, often hiding their vulnerability behind a calm, composed exterior.', 
+            'They are fiercely loyal to those they trust, but betrayal is never forgotten.',
+            'With a strong will and magnetic presence, Scorpios are natural leaders who often draw people in without even trying.', 
+            'Their determination, intuition, and emotional strength make them both captivating and complex.'],
+
+            'Sagittarius': ['Sagittarius is adventurous, optimistic, and always chasing the next big idea or experience.', 
+            'Ruled by Jupiter, they have a deep love for freedom, exploration, and philosophical thinking.', 
+            'They’re known for their honesty, sometimes being a bit too blunt without meaning harm.', 
+            'Sagittarians are natural explorers, whether it’s through travel, learning, or spiritual growth.', 
+            'They thrive in open spaces—both physically and mentally—and dislike feeling confined.', 
+            'With their infectious enthusiasm and big-picture mindset, they inspire others to dream bigger and aim higher.'],
+
+            'Capricorn': ['Capricorn is disciplined, responsible, and deeply committed to their goals.', 
+            'Ruled by Saturn, they have a strong work ethic and a practical, no-nonsense approach to life.', 
+            'They’re highly ambitious and determined, often willing to put in the hard work to achieve long-term success.', 
+            'Capricorns can be reserved and sometimes come off as serious, but they have a dry sense of humor when you get to know them.', 
+            'They value structure and stability, often taking on leadership roles and being the backbone of any project.', 
+            'With their unwavering persistence and practicality, Capricorns are known for turning their dreams into reality.'],
+
+            'Aquarius': ['Aquarius is innovative, independent, and always thinking outside the box.', 
+            'Ruled by Uranus, they are forward-thinking and often have unconventional ideas or views.', 
+            'They value individuality and freedom, often marching to the beat of their own drum.', 
+            'Aquarians are highly intellectual and love to engage in deep, thought-provoking conversations.', 
+            'They care deeply about social causes and can be seen fighting for change and progress in the world.', 
+            'With their unique perspective and open-mindedness, Aquarians are often seen as the visionaries of the zodiac.'],
+
+            'Pisces': ['Pisces is empathetic, intuitive, and deeply connected to their emotions.', 
+            'Ruled by Neptune, they have a strong imagination and a dreamy, artistic nature.', 
+            'Pisces are compassionate and often put the needs of others before their own.', 
+            'They are highly sensitive to the energy around them and can be deeply affected by the moods of others.', 
+            'With their creative spirit and love for escapism, they often find solace in art, music, or nature.', 
+            'Pisces have a gentle, understanding nature that makes them wonderful friends and confidants.']
+        };
+
+        const signImages = {
+            'Aries': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/aries.png',
+            'Taurus': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/taurus.png',
+            'Gemini': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/gemini.png',
+            'Cancer': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/cancer.png',
+            'Leo': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/leo.png',
+            'Virgo': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/virgo.png',
+            'Libra': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/libra.png',
+            'Scorpio': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/scorpio.png',
+            'Sagittarius': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/sagittarius.png',
+            'Capricorn': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/capricorn.png',
+            'Aquarius': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/aquarius.png',
+            'Pisces': 'C:/Users/LUPIG FAMILY/Desktop/HTML/bluetooth/pisces.png'
+        };
+
+        function createConstellation(sign) {
+            const container = document.createElement('div');
+            container.className = 'constellation';
+
+            constellationPatterns[sign].forEach(([left, top], index) => {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = $;{left}px;
+                star.style.top = $;{top}px;
+                star.style.animationDelay = $;{index * 0.2}s;
+                container.appendChild(star);
+            });
+
+            return container;
+        }
+
+        function findHoroscope() {
+            const month = parseInt(document.getElementById('month').value);
+            const day = parseInt(document.getElementById('day').value);
+            let zodiacSign = '';
+
+            const daysInMonth = {
+        1: 31,
+        2: 29,
+        3: 31,
+        4: 30,
+        5: 31,
+        6: 30,
+        7: 31,
+        8: 31,
+        9: 30,
+        10: 31,
+        11: 30,
+        12: 31
+    };
+
+    // Validate month and day
+    if (!daysInMonth[month] || day < 1 || day > daysInMonth[month]) {
+        alert('Invalid date! Please enter a valid day and month.');
+        return;
+    } else {
+        // Zodiac logic
+        if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) zodiacSign = 'Aquarius';
+        else if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) zodiacSign = 'Pisces';
+        else if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) zodiacSign = 'Aries';
+        else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) zodiacSign = 'Taurus';
+        else if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) zodiacSign = 'Gemini';
+        else if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) zodiacSign = 'Cancer';
+        else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) zodiacSign = 'Leo';
+        else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) zodiacSign = 'Virgo';
+        else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) zodiacSign = 'Libra';
+        else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) zodiacSign = 'Scorpio';
+        else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) zodiacSign = 'Sagittarius';
+        else zodiacSign = 'Capricorn';
+    }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <h3>${zodiacSign} Constellation</h3>
+                <img src="${signImages[zodiacSign]}" alt="${zodiacSign}" class="sign-image">
+                <div class="facts">
+                    <p><strong>Key Traits:</strong></p>
+                    <ul>${facts[zodiacSign].map(f => `<li>${f}</li>`).join('')}</ul>
+                </div>
+            `;
+            resultDiv.appendChild(createConstellation(zodiacSign));
+        }
+    </script>
+</body>
+</html>
