@@ -1,0 +1,150 @@
+
+            'Virgo': ['Your sharp mind will help you solve a lingering problem with ease this week.', 
+            "You'll feel the urge to reorganize or create new routines—go with it, it’ll bring you clarity.", 
+            'An unexpected opportunity may come through a conversation—stay open and observant.', 
+            'Be cautious with financial decisions; double-check details before committing.', 
+            'You’re becoming more emotionally grounded, which allows you to support others without draining yourself.', 
+            "A moment of clarity by the weekend will reassure you that you're on the right track, even if progress feels slow."],
+
+            'Libra': ['Balance is key this week, as you may feel pulled in different directions.', 
+            'A partnership or collaboration could bring you new opportunities.', 
+            'Stay grounded when faced with decisions—don’t rush into anything.', 
+            'Your sense of fairness will be your strength in resolving conflicts.', 
+            'Take time for introspection to understand your true desires.', 
+            'By the weekend, you’ll gain clarity on what you want moving forward.'],
+
+            'Scorpio': ['Intensity surrounds you this week, bringing both deep insights and emotional revelations.', 
+            'A hidden opportunity may come to light—don’t ignore the signs.', 
+            'Be cautious with secrets, as they might come out in unexpected ways.', 
+            'Trust your intuition when dealing with tricky situations.', 
+            'Take time for self-reflection to recharge your emotional energy.', 
+            'By the weekend, you’ll feel empowered to make bold moves toward your goals.'],
+
+            'Sagittarius': ['Adventure calls this week—embrace new experiences that expand your horizons.', 
+            'A learning opportunity may present itself, sparking your curiosity.', 
+            'Be mindful of overcommitting yourself, as your energy may be spread thin.', 
+            'A shift in your perspective could lead to a breakthrough in your personal growth.', 
+            'Trust in your optimism, but balance it with practicality to avoid disappointments.', 
+            'By the weekend, you’ll feel energized and ready to take on new challenges.'],
+
+            'Capricorn': ['Hard work pays off this week, bringing you closer to your long-term goals.', 
+            'You may face some challenges, but perseverance will see you through.', 
+            'An opportunity to demonstrate your leadership skills will present itself—take charge with confidence.', 
+            'Balance is key; make time for both work and personal life.', 
+            'Be mindful of overburdening yourself—delegate when needed.', 
+            'By the weekend, you’ll feel a strong sense of accomplishment and readiness for what’s next.'],
+
+            'Aquarius': ['Innovation is at the forefront this week—don’t be afraid to think outside the box.', 
+            'Collaborations could bring fresh ideas and open new doors for you.', 
+            'A sudden change in your routine may feel disruptive, but it leads to positive growth.', 
+            'Trust in your unique perspective to solve a problem others may overlook.', 
+            'You may feel drawn to humanitarian causes—your impact could be greater than you expect.', 
+            'By the weekend, you’ll have a clearer vision of your next big project.'],
+
+            'Pisces': ['Your intuition is heightened this week, guiding you through decisions with ease.', 
+            'Creativity flows freely, making it a great time to explore artistic or spiritual pursuits.', 
+            'A situation from the past may resurface—approach it with compassion and clarity.', 
+            'Your empathy helps strengthen relationships, but be mindful not to overextend yourself.', 
+            'Take time to retreat and recharge—your mind and body need rest.', 
+            'By the weekend, you’ll feel more centered and ready to embrace new opportunities.']
+        };
+
+        const signImages = {
+            'Aries': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/aries.png',
+            'Taurus': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/taurus.png',
+            'Gemini': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/gemini.png',
+            'Cancer': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/cancer.png',
+            'Leo': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/leo.png',
+            'Virgo': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/virgo.png',
+            'Libra': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/libra.png',
+            'Scorpio': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/scorpio.png',
+            'Sagittarius': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/sagittarius.png',
+            'Capricorn': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files//capricorn.png',
+            'Aquarius': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/aquarius.png',
+            'Pisces': 'C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/pisces.png'
+        };
+
+        function createConstellation(sign) {
+            const container = document.createElement('div');
+            container.className = 'constellation';
+
+            constellationPatterns[sign].forEach(([left, top], index) => {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = $;{left}px;
+                star.style.top = $;{top}px;
+                star.style.animationDelay = $;{index * 0.2}s;
+                container.appendChild(star);
+            });
+
+            return container;
+        }
+
+        function findHoroscope() {
+            const month = parseInt(document.getElementById('month').value);
+            const day = parseInt(document.getElementById('day').value);
+            let zodiacSign = '';
+
+            const daysInMonth = {
+        1: 31,
+        2: 29,
+        3: 31,
+        4: 30,
+        5: 31,
+        6: 30,
+        7: 31,
+        8: 31,
+        9: 30,
+        10: 31,
+        11: 30,
+        12: 31
+    };
+
+    // Validate month and day
+    if (!daysInMonth[month] || day < 1 || day > daysInMonth[month]) {
+        showPopup('Invalid date! Please enter a valid date of day');
+        return;
+    } else {
+        // Zodiac logic
+        if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) zodiacSign = 'Aquarius';
+        else if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) zodiacSign = 'Pisces';
+        else if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) zodiacSign = 'Aries';
+        else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) zodiacSign = 'Taurus';
+        else if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) zodiacSign = 'Gemini';
+        else if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) zodiacSign = 'Cancer';
+        else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) zodiacSign = 'Leo';
+        else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) zodiacSign = 'Virgo';
+        else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) zodiacSign = 'Libra';
+        else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) zodiacSign = 'Scorpio';
+        else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) zodiacSign = 'Sagittarius';
+        else zodiacSign = 'Capricorn';
+    }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <h3>${zodiacSign} Constellation</h3>
+                <img src="${signImages[zodiacSign]}" alt="${zodiacSign}" class="sign-image">
+                <div class="facts">
+                    <p><strong>Today's Predictions:</strong></p>
+                    <ul>${facts[zodiacSign].map(f => `<li>${f}</li>`).join('')}</ul>
+                </div>
+            `;
+            resultDiv.appendChild(createConstellation(zodiacSign));
+        }
+
+        function showPopup(message) {
+            const popup = document.getElementById('popup');
+            const popupMessage = document.getElementById('popupMessage');
+            popupMessage.textContent = message;
+            popup.style.display = 'flex';
+        }
+
+        // Close the custom popup
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            document.getElementById('popup').style.display = 'none';
+        });
+
+
+    </script>
+</body>
+</html>
