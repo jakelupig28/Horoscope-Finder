@@ -1,3 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Horoscope Finder</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #0a0a23;
+            color: white;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #bgVideo {
+            position: fixed;
+            top: 20;
+            left: 0;
+            min-width: 50vw;
+            min-height: 20vh;
+            object-fit: cover;
+            z-index: -1;
+            opacity:inherit;
+
+        }
+
+        .facts {
+            line-height: 1.6; 
+            text-align: left;
+
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(26, 26, 64, 0.85);
+            border-radius: 10px;
+            margin-top: 60px;
+            box-shadow: 0 0 20px rgba(0,191,255,0.2);
+            z-index: 1;
+        }
+
+        select, input, button {
+            margin: 10px;
+            padding: 8px;
+            background: #2a2a5a;
+            color: white;
+            border: 1px solid #3a3a7a;
+            border-radius: 4px;
+        }
+
+        button {
+            cursor: pointer;
+            background: #3a3a7a;
+        }
+
+        .constellation {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite;
+            box-shadow: 0 0 10px white;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .facts {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #2a2a5a;
+            border-radius: 8px;
+        }
+
+        .sign-image {
+            width: 300px;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 5px;
+
+        }
+
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: rgba(26, 26, 64, 0.85);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .sign-image {
+            width: 300px;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .popupMessage {
+            background-color: black;
+        }
+
+
+
+        .facts p {
+            text-align: center;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop playsinline id="bgVideo">
+        <source src="C:/Users/LUPIG FAMILY/Desktop/HTML/Horoscope Finder/files/bgweb2.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <div class="container">
+        <h2>🌟 Find Your Constellation 🌟</h2>
+        <select id="month">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+        </select>
+        <input type="number" id="day" min="1" max="31" placeholder="Day">
+        <button onclick="findHoroscope()">Show Constellation</button>
+        <div id="result"></div>
+    </div>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <span class="close-btn" id="closeBtn">&times;</span>
+            <p id="popupMessage">Invalid date! Please enter a valid date of day.</p>
+        </div>
+    </div>
+
+    <script>
+        const constellationPatterns = {
+            'Aries': [[50,50], [70,30], [90,50], [110,70], [130,50]],
+            'Taurus': [[50,50], [70,70], [90,50], [110,30], [130,50], [150,70]],
+            'Gemini': [[50,50], [70,30], [90,50], [110,70], [130,50], [150,30]],
+            'Cancer': [[50,70], [70,50], [90,70], [110,50], [130,70], [150,50]],
+            'Leo': [[50,50], [65,65], [80,50], [95,35], [110,50], [125,65], [140,50]],
+            'Virgo': [[50,50], [60,60], [70,50], [80,40], [90,50], [100,60], [110,50], [120,40]],
+            'Libra': [[50,50], [70,50], [90,50], [110,50], [130,50], [150,50]],
+            'Scorpio': [[50,50], [60,60], [70,50], [80,40], [90,50], [100,60], [110,50]],
+            'Sagittarius': [[50,50], [65,65], [80,50], [95,35], [110,50]],
+            'Capricorn': [[50,50], [60,60], [70,50], [80,40], [90,50], [100,60], [110,50], [120,40], [130,50]],
+            'Aquarius': [[50,50], [65,35], [80,50], [95,65], [110,50], [125,35], [140,50]],
+            'Pisces': [[50,50], [65,65], [80,50], [95,35], [110,50], [125,65], [140,50]]
+        };
+
+        const facts = {
+            'Aries': ['Your confidence will take center stage this week, helping you make bold moves.', 
+            'A new challenge may arise at work—embrace it as a chance to shine.', 
+            'Be mindful of impatience; slowing down could lead to better outcomes.', 
+            'An unexpected encounter could spark inspiration or even romance.', 
+            'Focus on your physical health—your energy will thrive with the right care.', 
+            'By the weekend, you’ll feel recharged and ready to take on your next big goal.'],
+
+            'Taurus': ["Stability is your theme this week, and you're finding comfort in your routines.", 
+            'A financial opportunity could arise—evaluate it carefully before jumping in.', 
+            'You may feel more connected to nature or your surroundings than usual.', 
+            'Conversations with loved ones will bring clarity and emotional grounding.', 
+            "Creativity is flowing—don't be afraid to express yourself in new ways.", 
+            'By the weekend, a sense of calm will settle in, reminding you of your inner strength.'],
+
+            'Gemini': ['Your social energy is high this week, making it the perfect time to connect and network.', 
+            'A surprising message or piece of news may shift your perspective.', 
+            'Your curiosity leads you to explore something new—follow that spark.', 
+            'Be careful not to spread yourself too thin with too many commitments.', 
+            'An honest conversation brings clarity in a personal relationship.', 
+            'By the weekend, you’ll feel mentally refreshed and full of new ideas.'],
+
+            'Cancer': ['Emotions may run deep this week, but they’ll guide you toward important insights.', 
+            'A home or family matter might need your attention—trust your instincts.', 
+            'You’re craving emotional security, so focus on nurturing the connections that matter.', 
+            'Creative expression could be especially healing right now.', 
+            'Don’t hesitate to set boundaries if you’re feeling drained.', 
+            'By the weekend, you’ll feel more balanced and ready to open your heart again.'],
+
+            'Leo': ['Your natural charisma draws people in this week—use it to inspire, not just impress.', 
+            'A leadership opportunity may arise—step into it with confidence.', 
+            'Be mindful of ego clashes, especially in close relationships.', 
+            'A creative idea could turn into something bigger if you nurture it.', 
+            'Focus on self-care to recharge your energy and stay centered.', 
+            'By the weekend, you’ll feel proud of how far you’ve come and ready for more.'],
 
             'Virgo': ['Your sharp mind will help you solve a lingering problem with ease this week.', 
             "You'll feel the urge to reorganize or create new routines—go with it, it’ll bring you clarity.", 
